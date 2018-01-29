@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace generate_data
 {
@@ -16,7 +17,7 @@ namespace generate_data
         public static List<DateTimeWD> GetDarknessTimeFromFile(bool firstHalf = true)
         {
             List<DateTimeWD> dates = new List<DateTimeWD>();
-            using (StreamReader reader = new StreamReader(firstHalf ? @"hours of darkness formatted_1.txt" : @"hours of darkness formatted_2.txt"))
+            using (StreamReader reader = new StreamReader(firstHalf ? $@"DataFiles\hours of darkness formatted_1.txt" : $@"DataFiles\hours of darkness formatted_2.txt"))
             {
                 string dayString = "";
                 dayString = reader.ReadLine();
