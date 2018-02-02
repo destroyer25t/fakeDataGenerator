@@ -41,9 +41,7 @@ namespace generate_data
                 var currentTime = new TimeSpan(0, i, 0);
                 var ourTime = new TimeSpan(8, 5, 0);
                 bool isLight = currentTime < new TimeSpan(day.Sunset.Hour, day.Sunset.Minute, 0) && currentTime > new TimeSpan(day.Sunrise.Hour, day.Sunrise.Minute, 0);
-
-                if (!isLight) Console.WriteLine(currentTime + " is Dark now");
-
+                
                 HumanNeedLightGenerator gen = new HumanNeedLightGenerator();
                 if (gen.HumanNeedLight(currentTime) && !isLight)
                 {
