@@ -2,43 +2,69 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace generate_data
 {
     public class FakeDataGenerator
     {
-        List<Sensor> sensors;
+        Sensor lampSwitchSensor = new Sensor
+        {
+            Id = 0,
+            Name = "sonoffSensor"
+        };
+
+        Sensor sensor2 = new Sensor
+        {
+            Id = 1,
+            Name = "lightningSensor"
+        };
+        
         List<DateTimeWD> allDarknessData = new List<DateTimeWD>(365);
         public FakeDataGenerator()
         {
-            sensors = new List<Sensor>
-            {
-                new Sensor
-                {
-                    Id = 0,
-                    Name = "sonoffSensor"
-                },
-                new Sensor{
-                    Id=1,
-                    Name = "lightningSensor"
-                }
-            };
             GetDarknessDataFromFile();
 
             foreach (var day in allDarknessData)
             {
-                GenerateDayData(day);
+                var dataDay = GenerateDayData(day);
             }
         }
 
-        public void GenerateDayData(DateTimeWD day)
+        public List<SensorRecord> GenerateDayData(DateTimeWD day)
         {
-            List<SensorRecord> records = new List<SensorRecord>(24 * 60 / 5);
+            List<SensorRecord> records = new List<SensorRecord>();
+
             for (int i = 0; i < 24 * 60; i += 5)
             {
+                var currentTime = new TimeSpan(0, i, 0);
+                var ourTime = new TimeSpan(8, 5, 0);
+                bool isLight = currentTime < new TimeSpan(day.Sunset.Hour, day.Sunset.Minute, 0) && currentTime > new TimeSpan(day.Sunrise.Hour, day.Sunrise.Minute, 0);
 
+                if (!isLight) Console.WriteLine(currentTime + " is Dark now");
+
+                HumanNeedLightGenerator gen = new HumanNeedLightGenerator();
+                if (gen.HumanNeedLight(currentTime) && !isLight)
+                {
+                    records.Add(new SensorRecord
+                    {
+                        sensor = lampSwitchSensor,
+                        recordDateTime = new DateTime(day.DateTime.Year, day.DateTime.Month, day.DateTime.Day, currentTime.Hours, currentTime.Minutes, currentTime.Seconds),
+                        SensorData = "1"
+                    });
+                }
+                else
+                {
+                    records.Add(new SensorRecord
+                    {
+                        sensor = lampSwitchSensor,
+                        recordDateTime = new DateTime(day.DateTime.Year, day.DateTime.Month, day.DateTime.Day, currentTime.Hours, currentTime.Minutes, currentTime.Seconds),
+                        SensorData = "0"
+                    });
+                }
             }
+            return records;
         }
 
         public void GetDarknessDataFromFile()

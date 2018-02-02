@@ -9,6 +9,5 @@ namespace generate_data
         public DateTime recordDateTime { get; set; }
         public Sensor sensor { get; set; }
         public string SensorData { get; set; }
-        public Type DataType { get; set; }
     }
 }

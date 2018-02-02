@@ -8,6 +8,5 @@ namespace generate_data
     {
         public int Id { get; set; }
         public string Name { get; set; }
-
     }
 }
